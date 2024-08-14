@@ -21,7 +21,7 @@ def exists(*filepath):
 
 dataDir = r'C:\Users\dzha937\DEV\MRHIST_DataProcessing\MRHIST'
 
-pts = ['mrhist' + str(i).zfill(3) for i in range(39, 71)]
+pts = ['mrhist' + str(i).zfill(3) for i in range(9, 71)]
 
 for eachP in pts:
     
@@ -29,34 +29,49 @@ for eachP in pts:
 
     refImgL = path(dataDir, eachP, 'ex_3d_cropped.nii')
     
-    outputDir = path(dataDir, eachP, '3d_slicer_script_output')
+    outputDir = path(dataDir, eachP, '3d_slicer_script_output_tfm1harden_tfm2resample')
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
         print(f"Created directory: {outputDir}")
-    outImgL_transition = path(outputDir, '(in_adc)_to_(in_3d).nii')
+    outImgL_transition_harden = path(outputDir, '(in_adc)_to_(in_3d)_harden.nii')
+    outImgL_transition_brainsresample = path(outputDir, '(in_adc)_to_(in_3d)_brainsresample.nii')
     outImgL = path(outputDir, '(in_adc)_into_(ex_3d_cropped)_linear.nii')
     
     tfmFileL_transition = path(dataDir, eachP, '(in_dwi_b50)_to_(in_3d).tfm')
     tfmFileL = path(dataDir, eachP, '(in_3d)_to_(ex_xd).tfm')
     intplMode = 'Linear'
 
-    if not exists(inImgL, refImgL, tfmFileL, tfmFileL_transition):
+    if not exists(inImgL, refImgL, tfmFileL):
         print(f'{inImgL} not found, skipped')
         continue
+    if not os.path.exists(tfmFileL_transition):# patients 025,030,031,033
+        # Rigid registration to in_3d: see code regFunc.py#step1_2
+        rigidReg(fixedImg=os.path.join(dataDir, eachP, 'in_3d.nii'),
+                 movingImg=os.path.join(dataDir, eachP, 'in_dwi_b50.nii'),
+                 outImg=None,
+                 outTfm=tfmFileL_transition)
+    else:
+        print(f'Using existing transformation:\n\t{tfmFileL_transition}')
 
-    # Rigid resampling---see code regFunc.py#step1_2
-    ret = warpImg(inImg=inImgL,#in_adc.nii
-                refImg=inImgL,#in_adc.nii
-                outImg=outImgL_transition,#(in_adc)_to_(in_3d).nii
-                pixelT='float',
-                tfmFile=tfmFileL_transition,
-                intplMode=intplMode,
-                labelMap=False)
+    # Rigid resampling---see code regFunc.py#step1_2, not really apply it, just for comparison
+    ret = warpImg(inImg=inImgL,  # in_adc.nii
+                  refImg=inImgL,  # in_adc.nii
+                  outImg=outImgL_transition_brainsresample,  # (in_adc)_to_(in_3d).nii
+                  pixelT='float',
+                  tfmFile=tfmFileL_transition,
+                  intplMode=intplMode,
+                  labelMap=False)
+
+    # Harden tfm---see code regFunc.py#step1_2
+    ret = warpImg2(inImg=os.path.join(dataDir, eachP, 'in_adc.nii'),
+                 outImg=outImgL_transition_harden,#(in_adc)_to_(in_3d).nii
+                 tfmFile=tfmFileL_transition #(in_dwi_b50)_to_(in_3d).tfm
+                )
 
     print(ret)
 
     # Rigid resampling
-    warpImg(inImg=outImgL_transition,#(in_adc)_to_(in_3d).nii
+    warpImg(inImg=outImgL_transition_harden,#(in_adc)_to_(in_3d).nii
             refImg=refImgL,
             outImg=outImgL,
             pixelT='float',
