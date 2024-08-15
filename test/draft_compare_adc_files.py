@@ -21,6 +21,7 @@ for subdir in Path(root_dir).glob("mrhist[0-9][0-9][0-9]*"):
     if "missing" not in str(subdir):
         in_adc_file = subdir / "3d_slicer_script_output_tfm1harden_tfm2resample" / "(in_adc)_into_(ex_3d_cropped)_linear.nii"
         check_file = subdir / "check_results" / "(in_adc)_into_(ex_3d_cropped).nii"
+        # in_adc_file = subdir / "transition" / "(in_adc)_into_(ex_3d_cropped).nii"
 
         if in_adc_file.exists() and check_file.exists():
             in_adc_img = sitk.ReadImage(str(in_adc_file))
@@ -63,7 +64,7 @@ ax.plot(subdirs, mse_diffs, label='Mean Squared Error')
 # Set the labels and title
 ax.set_xlabel('Subdir')
 ax.set_ylabel('Value')
-ax.set_title('Changing Trend')
+ax.set_title('script vs existing')
 ax.legend()
 
 # Show the plot

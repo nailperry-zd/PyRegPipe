@@ -21,7 +21,7 @@ def exists(*filepath):
 
 dataDir = r'C:\Users\dzha937\DEV\MRHIST_DataProcessing\MRHIST'
 
-pts = ['mrhist' + str(i).zfill(3) for i in range(9, 71)]
+pts = ['mrhist' + str(i).zfill(3) for i in range(33, 34)]
 
 for eachP in pts:
     
@@ -45,6 +45,8 @@ for eachP in pts:
         print(f'{inImgL} not found, skipped')
         continue
     if not os.path.exists(tfmFileL_transition):# patients 025,030,031,033
+        # actually patients 025,030,031 are well aligned already according to the readme.rxt, using an identity tfm instead,
+        # 033 not sure, no readme.rxt found
         # Rigid registration to in_3d: see code regFunc.py#step1_2
         rigidReg(fixedImg=os.path.join(dataDir, eachP, 'in_3d.nii'),
                  movingImg=os.path.join(dataDir, eachP, 'in_dwi_b50.nii'),
