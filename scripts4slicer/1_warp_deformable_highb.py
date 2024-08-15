@@ -28,14 +28,8 @@ for eachP in pts:
     inImgL = path(dataDir, eachP, 'in_b2000.nii.gz')
 
     refImgL = path(dataDir, eachP, 'ex_3d_cropped.nii')
-    
-    outputDir = path(dataDir, eachP, '3d_slicer_script_output_tfm1harden_tfm2resample')
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
-        print(f"Created directory: {outputDir}")
-    outImgL_transition_harden = path(outputDir, '(in_b2000)_to_(in_3d)_harden.nii')
-    outImgL_transition_brainsresample = path(outputDir, '(in_b2000)_to_(in_3d)_brainsresample.nii')
-    outImgL = path(outputDir, '(in_b2000)_into_(ex_3d_cropped)_linear.nii')
+
+
     
     tfmFileL_transition = path(dataDir, eachP, '(in_dwi_b50)_to_(in_3d).tfm')
     tfmFileL = path(dataDir, eachP, '(in_3d)_to_(ex_xd).tfm')
@@ -44,17 +38,14 @@ for eachP in pts:
     if not exists(inImgL, refImgL, tfmFileL):
         print(f'{inImgL} not found, skipped')
         continue
-    if not os.path.exists(tfmFileL_transition):# patients 025,030,031,033
-        # actually patients 025,030,031 are well aligned already according to the readme.rxt, using an identity tfm instead,
-        # 033 not sure, no readme.rxt found
-        # Rigid registration to in_3d: see code regFunc.py#step1_2
-        # This can work because '(in_adc)_to_(in_3d).nii' is acquired by applying '(in_dwi_b50)_to_(in_3d).tfm' to 'in_adc.nii'
-        rigidReg(fixedImg=os.path.join(dataDir, eachP, 'in_adc.nii'),
-                 movingImg=os.path.join(dataDir, eachP, '(in_adc)_to_(in_3d).nii'),
-                 outImg=None,
-                 outTfm=tfmFileL_transition)
-    else:
-        print(f'Using existing transformation:\n\t{tfmFileL_transition}')
+
+    outputDir = path(dataDir, eachP, '3d_slicer_script_output_tfm1harden_tfm2resample')
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
+        print(f"Created directory: {outputDir}")
+    outImgL_transition_harden = path(outputDir, '(in_b2000)_to_(in_3d)_harden.nii')
+    outImgL_transition_brainsresample = path(outputDir, '(in_b2000)_to_(in_3d)_brainsresample.nii')
+    outImgL = path(outputDir, '(in_b2000)_into_(ex_3d_cropped)_linear.nii')
 
     # Rigid resampling---see code regFunc.py#step1_2, not really apply it, just for comparison
     warpImg(inImg=inImgL,  # in_adc.nii
