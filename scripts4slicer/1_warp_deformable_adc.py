@@ -48,8 +48,9 @@ for eachP in pts:
         # actually patients 025,030,031 are well aligned already according to the readme.rxt, using an identity tfm instead,
         # 033 not sure, no readme.rxt found
         # Rigid registration to in_3d: see code regFunc.py#step1_2
-        rigidReg(fixedImg=os.path.join(dataDir, eachP, 'in_3d.nii'),
-                 movingImg=os.path.join(dataDir, eachP, 'in_dwi_b50.nii'),
+        # This can work because '(in_adc)_to_(in_3d).nii' is acquired by applying '(in_dwi_b50)_to_(in_3d).tfm' to 'in_adc.nii'
+        rigidReg(fixedImg=os.path.join(dataDir, eachP, 'in_adc.nii'),
+                 movingImg=os.path.join(dataDir, eachP, '(in_adc)_to_(in_3d).nii'),
                  outImg=None,
                  outTfm=tfmFileL_transition)
     else:
