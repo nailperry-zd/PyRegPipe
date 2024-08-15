@@ -66,7 +66,7 @@ for eachP in pts:
                   labelMap=False)
 
     # Harden tfm---see code regFunc.py#step1_2
-    ret = warpImg2(inImg=os.path.join(dataDir, eachP, 'in_adc.nii'),
+    ret = warpImg2(inImg=inImgL,
                  outImg=outImgL_transition_harden,#(in_adc)_to_(in_3d).nii
                  tfmFile=tfmFileL_transition #(in_dwi_b50)_to_(in_3d).tfm
                 )
