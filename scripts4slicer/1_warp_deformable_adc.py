@@ -21,15 +21,20 @@ def exists(*filepath):
 
 dataDir = r'C:\Users\dzha937\DEV\MRHIST_DataProcessing\MRHIST'
 
-pts = ['mrhist' + str(i).zfill(3) for i in range(33, 34)]
+pts = ['mrhist' + str(i).zfill(3) for i in range(5, 71)]
 
 for eachP in pts:
     
     inImgL = path(dataDir, eachP, 'in_adc.nii')
-
     refImgL = path(dataDir, eachP, 'ex_3d_cropped.nii')
+    tfmFileL_transition = path(dataDir, eachP, '(in_dwi_b50)_to_(in_3d).tfm')
+    tfmFileL = path(dataDir, eachP, '(in_3d)_to_(ex_xd).tfm')
+
+    if not exists(inImgL, refImgL, tfmFileL):
+        print(f'{inImgL} not found, skipped')
+        continue
     
-    outputDir = path(dataDir, eachP, '3d_slicer_script_output_tfm1harden_tfm2resample')
+    outputDir = path(dataDir, eachP, '3d_slicer4110_script_output_tfm1harden_tfm2resample')
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
         print(f"Created directory: {outputDir}")
@@ -37,13 +42,10 @@ for eachP in pts:
     outImgL_transition_brainsresample = path(outputDir, '(in_adc)_to_(in_3d)_brainsresample.nii')
     outImgL = path(outputDir, '(in_adc)_into_(ex_3d_cropped)_linear.nii')
     
-    tfmFileL_transition = path(dataDir, eachP, '(in_dwi_b50)_to_(in_3d).tfm')
-    tfmFileL = path(dataDir, eachP, '(in_3d)_to_(ex_xd).tfm')
+
     intplMode = 'Linear'
 
-    if not exists(inImgL, refImgL, tfmFileL):
-        print(f'{inImgL} not found, skipped')
-        continue
+
     if not os.path.exists(tfmFileL_transition):# patients 025,030,031,033
         # actually patients 025,030,031 are well aligned already according to the readme.rxt, using an identity tfm instead,
         # 033 not sure, no readme.rxt found
