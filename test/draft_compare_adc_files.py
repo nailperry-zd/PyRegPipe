@@ -52,7 +52,7 @@ df = pd.DataFrame({
 })
 
 # df.to_excel("results.xlsx", index=False)
-print("Results saved to 'results.xlsx'")
+print(f"max diff {max_diffs}")
 
 # Create the plot
 fig, ax = plt.subplots(figsize=(10, 6))
