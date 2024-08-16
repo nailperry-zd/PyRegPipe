@@ -26,11 +26,7 @@ pts = ['mrhist' + str(i).zfill(3) for i in range(5, 71)]
 for eachP in pts:
     
     inImgL = path(dataDir, eachP, 'in_b2000.nii.gz')
-
     refImgL = path(dataDir, eachP, 'ex_3d_cropped.nii')
-
-
-    
     tfmFileL_transition = path(dataDir, eachP, '(in_dwi_b50)_to_(in_3d).tfm')
     tfmFileL = path(dataDir, eachP, '(in_3d)_to_(ex_xd).tfm')
     intplMode = 'Linear'
@@ -39,7 +35,7 @@ for eachP in pts:
         print(f'{inImgL} not found, skipped')
         continue
 
-    outputDir = path(dataDir, eachP, '3d_slicer_script_output_tfm1harden_tfm2resample')
+    outputDir = path(dataDir, eachP, '3d_slicer4110_script_output_tfm1harden_tfm2resample')
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
         print(f"Created directory: {outputDir}")
